@@ -65,7 +65,7 @@
 	<div class="page-info-section page-info">
 		<div class="container">
 			<div class="site-breadcrumb">
-				<a href="">Home</a> / 
+				<a href="/">Home</a> / 
 				<a href="">Sales</a> / 
 				<a href="">Bags</a> / 
 				<a href="">Cart</a> / 
@@ -78,116 +78,138 @@
 
 
 	<!-- Page -->
-	<div class="page-area cart-page spad">
-		<div class="container">
-			<form class="checkout-form">
-				<div class="row">
-					<div class="col-lg-6">
-						<h4 class="checkout-title">Billing Address</h4>
-						<div class="row">
-							<div class="col-md-6">
-								<input type="text" placeholder="First Name *">
-							</div>
-							<div class="col-md-6">
-								<input type="text" placeholder="Last Name *">
-							</div>
-							<div class="col-md-12">
-								<input type="text" placeholder="Company">
-								<select>
-									<option>Country *</option>
-									<option>USA</option>
-									<option>UK</option>
-									<option>BANGLADESH</option>
-								</select>
-								<input type="text" placeholder="Address *">
-								<input type="text">
-								<input type="text" placeholder="Zipcode *">
-								<select>
-									<option>City/Town *</option>
-								</select>
-								<select>
-									<option>Province *</option>
-								</select>
-								<input type="text" placeholder="Phone no *">
-								<input type="email" placeholder="Email Address *">
-								<div class="checkbox-items">
-									<div class="ci-item">
-										<input type="checkbox" name="a" id="tandc">
-										<label for="tandc">Terms and conditions</label>
-									</div>
-									<div class="ci-item">
-										<input type="checkbox" name="b" id="newaccount">
-										<label for="newaccount">Create an account</label>
-										<input type="password" placeholder="password">
-									</div>
-									<div class="ci-item">
-										<input type="checkbox" name="c" id="newsletter">
-										<label for="newsletter">Subscribe to our newsletter</label>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-6">
-						<div class="order-card">
-							<div class="order-details">
-								<div class="od-warp">
-									<h4 class="checkout-title">Your order</h4>
-									<table class="order-table">
-										<thead>
-											<tr>
-												<th>Product</th>
-												<th>Total</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>Cocktail Yellow dress</td>
-												<td>$59.90</td>
-											</tr>
-											<tr>
-												<td>SubTotal</td>
-												<td>$59.90</td>
-											</tr>
-											<tr class="cart-subtotal">
-												<td>Shipping</td>
-												<td>Free</td>
-											</tr>
-										</tbody>
-										<tfoot>
-											<tr class="order-total">
-												<th>Total</th>
-												<th>$59.90</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
-								<div class="payment-method">
-									<div class="pm-item">
-										<input type="radio" name="pm" id="one">
-										<label for="one">Paypal</label>
-									</div>
-									<div class="pm-item">
-										<input type="radio" name="pm" id="two">
-										<label for="two">Cash on delievery</label>
-									</div>
-									<div class="pm-item">
-										<input type="radio" name="pm" id="three">
-										<label for="three">Credit card</label>
-									</div>
-									<div class="pm-item">
-										<input type="radio" name="pm" id="four" checked>
-										<label for="four">Direct bank transfer</label>
-									</div>
-								</div>
-							</div>
-							<button class="site-btn btn-full">Place Order</button>
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+	<div class="page-area checkout-page spad">
+        <div class="container">
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+    
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+    
+            <!-- Display form errors if any -->
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+    
+            <form action="{{ route('order.store') }}" method="POST" id="checkout-form">
+                @csrf
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="checkout-form-warp">
+                            <h4 class="checkout-title">Billing Details</h4>
+                            <div class="checkout-form">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" name="first_name" placeholder="First Name *" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="last_name" placeholder="Last Name *" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" name="company" placeholder="Company Name">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" name="address" placeholder="Address *" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="city" placeholder="City *" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="zipcode" placeholder="Zip code *" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="country" placeholder="Country *" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="province" placeholder="province *" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="phone" placeholder="Phone no *" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="email" name="email" placeholder="Email *" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="checkbox" name="create_account" id="create_account">
+                                        <label for="create_account">Create an account</label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <textarea name="notes" placeholder="Order Notes"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 order-summary">
+                        <div class="checkout-card">
+                            <h4 class="checkout-title">Your Order</h4>
+                            <div class="checkout-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($cart as $item)
+                                        <tr>
+                                            <td>{{ $item->product->name }} <span>× {{ $item->quantity }}</span></td>
+                                            <td>${{ number_format($item->product->price * $item->quantity, 2) }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="subtotal">
+                                            <td>Subtotal</td>
+                                            <td>${{ number_format($subtotal, 2) }}</td>
+                                        </tr>
+                                        <tr class="shipping">
+                                            <td>Shipping</td>
+                                            <td>
+                                                @if($shipping > 0)
+                                                    ${{ number_format($shipping, 2) }}
+                                                @else
+                                                    Free
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr class="total">
+                                            <td>Total</td>
+                                            <td>${{ number_format($total, 2) }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="payment-method">
+                                <div class="pm-item">
+                                    <input type="radio" name="payment_method" id="card" value="card" checked>
+                                    <label for="card">Credit / Debit card</label>
+                                </div>
+                                <div class="pm-item">
+                                    <input type="radio" name="payment_method" id="paypal" value="paypal">
+                                    <label for="paypal">PayPal</label>
+                                </div>
+                            </div>
+                            <button class="site-btn btn-full" type="submit">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 	<!-- Page -->
 
 

@@ -77,10 +77,11 @@
   <div class="register-container">
     <h2>Create Your Account</h2>
     <form action="/register" method="post">
-      <input type="text" name="fullname" placeholder="Full Name" required />
+        @csrf
+      <input type="text" name="name" placeholder="Full Name" required />
       <input type="email" name="email" placeholder="Email Address" required />
+      <input type="number" name="telepon" placeholder="Telepon" required />
       <input type="password" name="password" placeholder="Password" required />
-      <input type="password" name="confirm_password" placeholder="Confirm Password" required />
       <button type="submit">Register</button>
     </form>
     <div class="login">

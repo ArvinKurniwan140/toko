@@ -77,6 +77,7 @@
   <div class="login-container">
     <h2>Login to The Plaza</h2>
     <form action="/login" method="post">
+        @csrf
       <input type="email" name="email" placeholder="Email Address" required />
       <input type="password" name="password" placeholder="Password" required />
       <button type="submit">Login</button>

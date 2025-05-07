@@ -65,10 +65,11 @@
 	<div class="page-info-section page-info">
 		<div class="container">
 			<div class="site-breadcrumb">
-				<a href="">Home</a> / 
+				<a href="/">Home</a> / 
 				<a href="">Sales</a> / 
 				<a href="">Bags</a> / 
-				<span>Cart</span>
+				<a href="">Cart</a> / 
+				<span>Checkout</span>
 			</div>
 			<img src="img/page-info-art.png" alt="" class="page-info-art">
 		</div>
@@ -77,129 +78,100 @@
 
 
 	<!-- Page -->
-	<div class="page-area cart-page spad">
-		<div class="container">
-			@if(session('success'))
-				<div class="alert alert-success">
-					{{ session('success') }}
-				</div>
-			@endif
-			
-			@if($cart->count() > 0)
-				<div class="cart-table">
-					<table>
-						<thead>
-							<tr>
-								<th class="product-th">Product</th>
-								<th>Price</th>
-								<th>Quantity</th>
-								<th class="total-th">Total</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach($cart as $item)
-							<tr>
-								<td class="product-col">
-									<img src="{{ asset($item->product->image ?? 'img/product/cart.jpg') }}" alt="">
-									<div class="pc-title">
-										<h4>{{ $item->product->name }}</h4>
-										<a href="#">Edit Product</a>
-									</div>
-								</td>
-								<td class="price-col">${{ number_format($item->product->price, 2) }}</td>
-								<td class="quy-col">
-									<form action="{{ route('cart.update', $item->id) }}" method="POST">
-										@csrf
-										@method('PUT')
-										<div class="quy-input">
-											<span>Qty</span>
-											<input type="number" name="quantity" value="{{ $item->quantity }}" min="1">
-											<button type="submit" class="btn btn-sm btn-primary">Update</button>
-										</div>
-									</form>
-								</td>
-								<td class="total-col">${{ number_format($item->product->price * $item->quantity, 2) }}</td>
-								<td>
-									<form action="{{ route('cart.remove', $item->id) }}" method="POST">
-										@csrf
-										@method('DELETE')
-										<button type="submit" class="btn btn-sm btn-danger">Remove</button>
-									</form>
-								</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
-				<div class="row cart-buttons">
-					<div class="col-lg-5 col-md-5">
-						<a href="/" class="site-btn btn-continue">Continue shopping</a>
-					</div>
-					<div class="col-lg-7 col-md-7 text-lg-right text-left">
-						<form action="{{ route('cart.clear') }}" method="POST" style="display: inline-block;">
-							@csrf
-							@method('DELETE')
-							<button type="submit" class="site-btn btn-clear">Clear cart</button>
-						</form>
-					</div>
-				</div>
-			@else
-				<div class="text-center">
-					<h3>Your cart is empty</h3>
-					<a href="/" class="site-btn">Continue Shopping</a>
-				</div>
-			@endif
-		</div>
-		
-		@if($cart->count() > 0)
-		<div class="card-warp">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-4">
-						<div class="shipping-info">
-							<h4>Shipping method</h4>
-							<p>Select the one you want</p>
-							<div class="shipping-chooes">
-								<div class="sc-item">
-									<input type="radio" name="sc" id="one">
-									<label for="one">Next day delivery<span>$4.99</span></label>
-								</div>
-								<div class="sc-item">
-									<input type="radio" name="sc" id="two">
-									<label for="two">Standard delivery<span>$1.99</span></label>
-								</div>
-								<div class="sc-item">
-									<input type="radio" name="sc" id="three">
-									<label for="three">Personal Pickup<span>Free</span></label>
-								</div>
-							</div>
-							<h4>Cupon code</h4>
-							<p>Enter your cupone code</p>
-							<div class="cupon-input">
-								<input type="text">
-								<button class="site-btn">Apply</button>
-							</div>
-						</div>
-					</div>
-					<div class="offset-lg-2 col-lg-6">
-						<div class="cart-total-details">
-							<h4>Cart total</h4>
-							<p>Final Info</p>
-							<ul class="cart-total-card">
-								<li>Subtotal<span>${{ number_format($subtotal, 2) }}</span></li>
-								<li>Shipping<span>Free</span></li>
-								<li class="total">Total<span>${{ number_format($subtotal, 2) }}</span></li>
-							</ul>
-							<a class="site-btn btn-full" href="{{ route('checkout') }}">Proceed to checkout</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		@endif
-	</div>
-	<!-- Page end -->
+	<div class="page-area confirmation-page spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h3>Thank You For Your Order!</h3>
+                            <h4>Order #{{ $order->id }}</h4>
+                        </div>
+                        <div class="card-body">
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+    
+                            <div class="confirmation-details">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h5>Billing Details</h5>
+                                        <p>{{ $order->first_name }} {{ $order->last_name }}</p>
+                                        @if($order->company)
+                                            <p>{{ $order->company }}</p>
+                                        @endif
+                                        <p>{{ $order->address }}</p>
+                                        <p>{{ $order->city }}, {{ $order->province }} {{ $order->zipcode }}</p>
+                                        <p>{{ $order->country }}</p>
+                                        <p>Phone: {{ $order->phone }}</p>
+                                        <p>Email: {{ $order->email }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Order Details</h5>
+                                        <p>Order Date: {{ $order->created_at->format('M d, Y') }}</p>
+                                        <p>Payment Method: {{ ucfirst($order->payment_method) }}</p>
+                                        <p>Order Status: <span class="badge badge-primary">{{ ucfirst($order->status) }}</span></p>
+                                    </div>
+                                </div>
+    
+                                <h5>Order Summary</h5>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($order->orderItems as $item)
+                                        <tr>
+                                            <td>{{ $item->product->name }}</td>
+                                            <td>{{ $item->quantity }}</td>
+                                            <td>${{ number_format($item->price, 2) }}</td>
+                                            <td>${{ number_format($item->total, 2) }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                                            <td>${{ number_format($order->subtotal, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-right"><strong>Shipping:</strong></td>
+                                            <td>
+                                                @if($order->shipping > 0)
+                                                    ${{ number_format($order->shipping, 2) }}
+                                                @else
+                                                    Free
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                            <td>${{ number_format($order->total_amount, 2) }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+    
+                            <div class="text-center mt-4">
+                                <a href="{{ url('/') }}" class="site-btn">Continue Shopping</a>
+                                @if(auth()->check())
+                                    <a href="{{ route('account.orders') }}" class="site-btn btn-line">View My Orders</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- Page -->
 
 
 	<!-- Footer top section -->	

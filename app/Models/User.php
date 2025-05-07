@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\EncryptsAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,16 +11,26 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, EncryptsAttributes;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
+
+    // protected $encryptable = [
+    //     'phone_number'
+    // ];
+
+    protected $encrypts = [
+        'telepon',
+    ];
+
     protected $fillable = [
         'name',
         'email',
+        'telepon',
         'password',
     ];
 
@@ -42,4 +53,20 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Relasi dengan payment methods
+     */
+    public function paymentMethods()
+    {
+        return $this->hasMany(Pembayaran::class);
+    }
+
+    /**
+     * Relasi dengan orders
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

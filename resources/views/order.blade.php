@@ -77,128 +77,58 @@
 
 
 	<!-- Page -->
-	<div class="page-area cart-page spad">
-		<div class="container">
-			@if(session('success'))
-				<div class="alert alert-success">
-					{{ session('success') }}
-				</div>
-			@endif
-			
-			@if($cart->count() > 0)
-				<div class="cart-table">
-					<table>
-						<thead>
-							<tr>
-								<th class="product-th">Product</th>
-								<th>Price</th>
-								<th>Quantity</th>
-								<th class="total-th">Total</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach($cart as $item)
-							<tr>
-								<td class="product-col">
-									<img src="{{ asset($item->product->image ?? 'img/product/cart.jpg') }}" alt="">
-									<div class="pc-title">
-										<h4>{{ $item->product->name }}</h4>
-										<a href="#">Edit Product</a>
-									</div>
-								</td>
-								<td class="price-col">${{ number_format($item->product->price, 2) }}</td>
-								<td class="quy-col">
-									<form action="{{ route('cart.update', $item->id) }}" method="POST">
-										@csrf
-										@method('PUT')
-										<div class="quy-input">
-											<span>Qty</span>
-											<input type="number" name="quantity" value="{{ $item->quantity }}" min="1">
-											<button type="submit" class="btn btn-sm btn-primary">Update</button>
-										</div>
-									</form>
-								</td>
-								<td class="total-col">${{ number_format($item->product->price * $item->quantity, 2) }}</td>
-								<td>
-									<form action="{{ route('cart.remove', $item->id) }}" method="POST">
-										@csrf
-										@method('DELETE')
-										<button type="submit" class="btn btn-sm btn-danger">Remove</button>
-									</form>
-								</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
-				<div class="row cart-buttons">
-					<div class="col-lg-5 col-md-5">
-						<a href="/" class="site-btn btn-continue">Continue shopping</a>
-					</div>
-					<div class="col-lg-7 col-md-7 text-lg-right text-left">
-						<form action="{{ route('cart.clear') }}" method="POST" style="display: inline-block;">
-							@csrf
-							@method('DELETE')
-							<button type="submit" class="site-btn btn-clear">Clear cart</button>
-						</form>
-					</div>
-				</div>
-			@else
-				<div class="text-center">
-					<h3>Your cart is empty</h3>
-					<a href="/" class="site-btn">Continue Shopping</a>
-				</div>
-			@endif
-		</div>
-		
-		@if($cart->count() > 0)
-		<div class="card-warp">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-4">
-						<div class="shipping-info">
-							<h4>Shipping method</h4>
-							<p>Select the one you want</p>
-							<div class="shipping-chooes">
-								<div class="sc-item">
-									<input type="radio" name="sc" id="one">
-									<label for="one">Next day delivery<span>$4.99</span></label>
-								</div>
-								<div class="sc-item">
-									<input type="radio" name="sc" id="two">
-									<label for="two">Standard delivery<span>$1.99</span></label>
-								</div>
-								<div class="sc-item">
-									<input type="radio" name="sc" id="three">
-									<label for="three">Personal Pickup<span>Free</span></label>
-								</div>
-							</div>
-							<h4>Cupon code</h4>
-							<p>Enter your cupone code</p>
-							<div class="cupon-input">
-								<input type="text">
-								<button class="site-btn">Apply</button>
-							</div>
-						</div>
-					</div>
-					<div class="offset-lg-2 col-lg-6">
-						<div class="cart-total-details">
-							<h4>Cart total</h4>
-							<p>Final Info</p>
-							<ul class="cart-total-card">
-								<li>Subtotal<span>${{ number_format($subtotal, 2) }}</span></li>
-								<li>Shipping<span>Free</span></li>
-								<li class="total">Total<span>${{ number_format($subtotal, 2) }}</span></li>
-							</ul>
-							<a class="site-btn btn-full" href="{{ route('checkout') }}">Proceed to checkout</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		@endif
-	</div>
+	<div class="container py-5">
+        <h2 class="mb-4">My Orders</h2>
+    
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+    
+        @if($orders->isEmpty())
+            <p>You haven't placed any orders yet.</p>
+        @else
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($orders as $order)
+                            <tr>
+                                <td>#{{ $order->id }}</td>
+                                <td>{{ $order->created_at->format('d M Y') }}</td>
+                                <td>{{ $order->orderItems->sum('quantity') }} item(s)</td>
+                                <td>${{ number_format($order->total_amount, 2) }}</td>
+                                <td>
+                                    @if($order->status == 'pending')
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    @elseif($order->status == 'completed')
+                                        <span class="badge bg-success">Completed</span>
+                                    @elseif($order->status == 'cancelled')
+                                        <span class="badge bg-danger">Cancelled</span>
+                                    @else
+                                        <span class="badge bg-secondary">{{ ucfirst($order->status) }}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('order.confirmation', $order->id) }}" class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
 	<!-- Page end -->
 
 

@@ -49,7 +49,16 @@
                 
                 <a href="cart" class="card-bag"><img src="img/icons/bag.png" alt=""><span>2</span></a>
                 <a href="#" class="search"><img src="img/icons/search.png" alt=""></a>
+                @guest
                 <a href="login" class="alert alert-light ml-5">Login</a>
+                    
+                @endguest
+                @auth
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-light ml-3">Logout</button>
+                </form>
+                @endauth
             </div>
             <!-- site menu -->
             <ul class="main-menu">
@@ -96,72 +105,32 @@
     <!-- Intro section -->
     <section class="intro-section spad pb-0">
         <div class="section-title">
-            <h2>pemium products</h2>
+            <h2>premium products</h2>
             <p>We recommend</p>
         </div>
         <div class="intro-slider">
             <ul class="slidee">
+                @foreach($premiumProducts as $product)
                 <li>
                     <div class="intro-item">
                         <figure>
-                            <img src="img/intro/1.jpg" alt="#">
+                            <img src="{{ asset('img/products/' . $product->image) }}" alt="{{ $product->name }}">
+                            @if($product->is_new)
+                                <div class="bache">NEW</div>
+                            @endif
                         </figure>
                         <div class="product-info">
-                            <h5>Pink Sunglasses</h5>
-                            <p>$319.50</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
+                            <h5>{{ $product->name }}</h5>
+                            <p>${{ number_format($product->price, 2) }}</p>
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="site-btn btn-line">ADD TO CART</button>
+                            </form>
                         </div>
                     </div>
                 </li>
-                <li>
-                    <div class="intro-item">
-                        <figure>
-                            <img src="img/intro/2.jpg" alt="#">
-                        </figure>
-                        <div class="product-info">
-                            <h5>Black Nighty</h5>
-                            <p>$319.50</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="intro-item">
-                        <figure>
-                            <img src="img/intro/3.jpg" alt="#">
-                            <div class="bache">NEW</div>
-                        </figure>
-                        <div class="product-info">
-                            <h5>Yellow Sholder bag</h5>
-                            <p>$319.50</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="intro-item">
-                        <figure>
-                            <img src="img/intro/4.jpg" alt="#">
-                        </figure>
-                        <div class="product-info">
-                            <h5>Yellow Sunglasses</h5>
-                            <p>$319.50</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="intro-item">
-                        <figure>
-                            <img src="img/intro/5.jpg" alt="#">
-                        </figure>
-                        <div class="product-info">
-                            <h5>Black Sholder bag</h5>
-                            <p>$319.50</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </li>
+                @endforeach
             </ul>
         </div>
         <div class="container">
@@ -206,185 +175,43 @@
                 <li class="control" data-filter=".best">Best sellers</li>
             </ul>
             <div class="row" id="product-filter">
-                <div class="mix col-lg-3 col-md-6 best">
+                @foreach($allProducts as $product)
+                <div class="mix col-lg-3 col-md-6 {{ $product->category }}">
                     <div class="product-item">
                         <figure>
-                            <img src="img/products/1.jpg" alt="">
+                            <img src="{{ asset('img/products/' . $product->image) }}" alt="{{ $product->name }}">
+                            @if($product->is_new)
+                                <div class="bache">NEW</div>
+                            @elseif($product->is_sale)
+                                <div class="bache sale">SALE</div>
+                            @endif
                             <div class="pi-meta">
                                 <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
+                                    <img src="{{ asset('img/icons/eye.png') }}" alt="">
                                     <p>quick view</p>
                                 </div>
                                 <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
+                                    <img src="{{ asset('img/icons/heart.png') }}" alt="">
                                     <p>save</p>
                                 </div>
                             </div>
                         </figure>
                         <div class="product-info">
-                            <h6>Long red Shirt</h6>
-                            <p>$39.90</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
+                            <h6>{{ $product->name }}</h6>
+                            @if($product->sale_price)
+                                <p>${{ number_format($product->sale_price, 2) }} <span>RRP ${{ number_format($product->price, 2) }}</span></p>
+                            @else
+                                <p>${{ number_format($product->price, 2) }}</p>
+                            @endif
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="site-btn btn-line">ADD TO CART</button>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="mix col-lg-3 col-md-6 new">
-                    <div class="product-item">
-                        <figure>
-                            <img src="img/products/2.jpg" alt="">
-                            <div class="bache">NEW</div>
-                            <div class="pi-meta">
-                                <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
-                                    <p>quick view</p>
-                                </div>
-                                <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
-                                    <p>save</p>
-                                </div>
-                            </div>
-                        </figure>
-                        <div class="product-info">
-                            <h6>Hype grey shirt</h6>
-                            <p>$19.50</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="mix col-lg-3 col-md-6 best">
-                    <div class="product-item">
-                        <figure>
-                            <img src="img/products/3.jpg" alt="">
-                            <div class="pi-meta">
-                                <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
-                                    <p>quick view</p>
-                                </div>
-                                <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
-                                    <p>save</p>
-                                </div>
-                            </div>
-                        </figure>
-                        <div class="product-info">
-                            <h6>long sleeve jacket</h6>
-                            <p>$59.90</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="mix col-lg-3 col-md-6 new best">
-                    <div class="product-item">
-                        <figure>
-                            <img src="img/products/4.jpg" alt="">
-                            <div class="bache sale">SALE</div>
-                            <div class="pi-meta">
-                                <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
-                                    <p>quick view</p>
-                                </div>
-                                <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
-                                    <p>save</p>
-                                </div>
-                            </div>
-                        </figure>
-                        <div class="product-info">
-                            <h6>Denim men shirt</h6>
-                            <p>$32.20 <span>RRP 64.40</span></p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="mix col-lg-3 col-md-6 best">
-                    <div class="product-item">
-                        <figure>
-                            <img src="img/products/5.jpg" alt="">
-                            <div class="pi-meta">
-                                <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
-                                    <p>quick view</p>
-                                </div>
-                                <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
-                                    <p>save</p>
-                                </div>
-                            </div>
-                        </figure>
-                        <div class="product-info">
-                            <h6>Long red Shirt</h6>
-                            <p>$39.90</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="mix col-lg-3 col-md-6 new">
-                    <div class="product-item">
-                        <figure>
-                            <img src="img/products/6.jpg" alt="">
-                            <div class="bache">NEW</div>
-                            <div class="pi-meta">
-                                <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
-                                    <p>quick view</p>
-                                </div>
-                                <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
-                                    <p>save</p>
-                                </div>
-                            </div>
-                        </figure>
-                        <div class="product-info">
-                            <h6>Hype grey shirt</h6>
-                            <p>$19.50</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="mix col-lg-3 col-md-6 best">
-                    <div class="product-item">
-                        <figure>
-                            <img src="img/products/7.jpg" alt="">
-                            <div class="pi-meta">
-                                <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
-                                    <p>quick view</p>
-                                </div>
-                                <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
-                                    <p>save</p>
-                                </div>
-                            </div>
-                        </figure>
-                        <div class="product-info">
-                            <h6>long sleeve jacket</h6>
-                            <p>$59.90</p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="mix col-lg-3 col-md-6 best">
-                    <div class="product-item">
-                        <figure>
-                            <img src="img/products/8.jpg" alt="">
-                            <div class="pi-meta">
-                                <div class="pi-m-left">
-                                    <img src="img/icons/eye.png" alt="">
-                                    <p>quick view</p>
-                                </div>
-                                <div class="pi-m-right">
-                                    <img src="img/icons/heart.png" alt="">
-                                    <p>save</p>
-                                </div>
-                            </div>
-                        </figure>
-                        <div class="product-info">
-                            <h6>Denim men shirt</h6>
-                            <p>$32.20 <span>RRP 64.40</span></p>
-                            <a href="#" class="site-btn btn-line">ADD TO CART</a>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
